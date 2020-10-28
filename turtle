@@ -1,0 +1,9 @@
+copy -> C
+plate -> P
+rotateR -> R
+rotateL -> L
+forward -> F
+
+scale -> S
+color -> I
+range -> ~
