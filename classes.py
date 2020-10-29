@@ -82,9 +82,9 @@ class Artist:
         self._position = start_position
         self._angle = start_angle + 90
         self._base_size_line = size_line
+        self._size_line = self._base_size_line
         self._color = color
         self._select_color = 0
-
         self._create_canvas(size_canvas, back_color)
 
     def _create_canvas(self, size_canvas, back_color):
@@ -93,7 +93,6 @@ class Artist:
         else:
             self._canvas = Image.new("RGBA", size_canvas, color=back_color)
         self._canvas_draw = ImageDraw.Draw(self._canvas)
-        self._size_line = self._base_size_line
 
     def _push(self):
         self.stack.append(
@@ -153,6 +152,19 @@ class Artist:
                                width=value,
                                fill=self._color[self._select_color])
 
+    def restart_draw(self,
+                     start_position: [int, int],
+                     start_angle: int,
+                     size_line: int,
+                     color: list
+                     ):
+        self._position = start_position
+        self._angle = start_angle + 90
+        self._base_size_line = size_line
+        self._color = color
+        self._select_color = 0
+        self._size_line = self._base_size_line
+
     def save_canvas(self, name):
         self._canvas.save(f"{name}.png")
 
@@ -196,5 +208,3 @@ class Artist:
                 self._change_color(value_action)
             else:
                 pass
-
-        pass
