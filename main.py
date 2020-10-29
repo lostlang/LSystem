@@ -4,27 +4,24 @@ import classes
 if __name__ == '__main__':
     seed = "X"
     rules = {
-        "X": "F[S[-X]+SX]"
+        "X": "F-[[X]+X]+F[+FX]-X",
+        "F": "FF"
     }
     rulesTurtle = {
-        "X": "F",
-        "F": "F10",
-        "-": "L45",
-        "+": "R30~40",
-        "S": "S",
+        "F": "F",
+        "X": "",
+        "-": "L25",
+        "+": "R25",
         "[": "C",
         "]": "P"
     }
     tree = classes.LSystem(seed, rules)
 
-    tree.next(3)
+    tree.next(8)
 
     turtle = classes.LSystem(tree.get_value(), rulesTurtle)
     turtle.next()
 
-    artist = classes.Artist([0, 0], 0, [20, 20], 10, ['red'])
+    artist = classes.Artist([720, 2800], 180, [1600, 2400], "#9BC2CF", 4, ['#416c41'])
     artist.read_l_system(turtle.get_value())
-
-    file = open("tree.txt", "w")
-    print(turtle.get_value(), file=file)
-    file.close()
+    artist.save_canvas("test")

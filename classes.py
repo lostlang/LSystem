@@ -1,4 +1,6 @@
 import random
+from PIL import Image, ImageDraw
+import math
 
 
 class LSystem:
@@ -64,12 +66,16 @@ class Artist:
     def __init__(self,
                  start_position: [int, int],
                  start_angle: int,
-                 size_canvas: [int, int],
+                 size_canvas: (int, int),
+                 back_color: str,
                  size_line: int,
                  color: list):
         """
+        Create object Artist type
         :param start_position: x and y point to start image
         :param size_canvas: height and width image
+        :param back_color: color for background image, if value "transparent" or "" create image with transparent
+         background
         :param size_line: start size line
         :param color: list of color for drawing
         """
@@ -79,11 +85,14 @@ class Artist:
         self._color = color
         self._select_color = 0
 
-        self._create_canvas(size_canvas)
+        self._create_canvas(size_canvas, back_color)
 
-    def _create_canvas(self, size_canvas):
-        # wip
-        self._canvas = size_canvas
+    def _create_canvas(self, size_canvas, back_color):
+        if back_color in ["transparent", ""]:
+            self._canvas = Image.new("RGBA", size_canvas)
+        else:
+            self._canvas = Image.new("RGBA", size_canvas, color=back_color)
+        self._canvas_draw = ImageDraw.Draw(self._canvas)
         self._size_line = self._base_size_line
 
     def _push(self):
@@ -124,12 +133,28 @@ class Artist:
         self._color += value
 
     def _move(self, value):
-        # wip
-        pass
+        if type(value) is list:
+            value = random.randint(*value)
+        elif not value:
+            value = self._size_line
+        self._position = [
+            self._position[0] + math.sin(math.radians(self._angle)) * value,
+            self._position[1] + math.cos(math.radians(self._angle)) * value
+        ]
+        return self._position
 
     def _draw(self, value):
-        # wip
-        pass
+        if type(value) is list:
+            value = random.randint(*value)
+        elif not value:
+            value = self._size_line
+        self._canvas_draw.line((*self._position,
+                                *self._move(value)),
+                               width=value,
+                               fill=self._color[self._select_color])
+
+    def save_canvas(self, name):
+        self._canvas.save(f"{name}.png")
 
     def read_l_system(self, l_system):
         index_to_l_system_string = 0
@@ -171,5 +196,5 @@ class Artist:
                 self._change_color(value_action)
             else:
                 pass
-                print(action, value_action)
+
         pass
