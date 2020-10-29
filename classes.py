@@ -149,7 +149,7 @@ class Artist:
             value = self._size_line
         self._canvas_draw.line((*self._position,
                                 *self._move(value)),
-                               width=value,
+                               width=self._base_size_line,
                                fill=self._color[self._select_color])
 
     def restart_draw(self,
