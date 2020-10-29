@@ -80,7 +80,7 @@ class Artist:
         :param color: list of color for drawing
         """
         self._position = start_position
-        self._angle = start_angle
+        self._angle = start_angle + 90
         self._base_size_line = size_line
         self._color = color
         self._select_color = 0

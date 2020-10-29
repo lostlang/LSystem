@@ -22,6 +22,6 @@ if __name__ == '__main__':
     turtle = classes.LSystem(tree.get_value(), rulesTurtle)
     turtle.next()
 
-    artist = classes.Artist([720, 2800], 180, [1600, 2400], "#9BC2CF", 4, ['#416c41'])
+    artist = classes.Artist([720, 2800], 90, [1600, 2400], "#9BC2CF", 4, ['#416c41'])
     artist.read_l_system(turtle.get_value())
     artist.save_canvas("test")
