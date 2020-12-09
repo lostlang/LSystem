@@ -4,7 +4,6 @@ import math
 
 
 class LSystem:
-
     def __init__(self,
                  seed: str,
                  rules: dict):
@@ -30,11 +29,11 @@ class LSystem:
         :param step: number of iteration ( if type not int, step = 1 )
         :return: value system after step
         """
-        if type(step) is not int:
-            step = 1
-        for i in range(step):
+        try:
+            for i in range(step):
+                self._update_system()
+        except:
             self._update_system()
-
         return self._value
 
     def get_value(self):
