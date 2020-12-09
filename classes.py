@@ -1,10 +1,11 @@
 import random
 from PIL import Image, ImageDraw
 import math
+import numba
+import numpy
 
 
 class LSystem:
-
     def __init__(self,
                  seed: str,
                  rules: dict):
@@ -13,15 +14,34 @@ class LSystem:
         :param seed: start system value
         :param rules: rule for changing system
         """
-        self._value = seed
-        self._rules = rules
+        self._value = numpy.array([*seed])
+        self._rules = numpy.zeros(len(rules), dtype=numpy.unicode)
+        self._counter_char = numpy.zeros(len(rules), dtype=int)
+        self._convert = numpy.zeros((len(rules), max(map(len, rules.values()))), dtype=numpy.unicode)
+
+        i = 0
+        for key, value in rules.items():
+            self._rules[i] = key
+            self._counter_char[i] = len(value)
+            for i2 in range(self._convert.shape[1]):
+                try:
+                    self._convert[i, i2] = value[i2]
+                except:
+                    break
+            i += 1
 
     def _update_system(self):
         """
         Function for updating system value
         """
-        self._value = "".join([self._rules[i] if i in self._rules else i
-                               for i in self._value])
+        new_value = numpy.array([], dtype=numpy.unicode)
+        for rule in self._value:
+            try:
+                index = numpy.in1d(self._rules, rule)
+                new_value = numpy.append(new_value, *self._convert[index, :self._counter_char[index][0]], axis=0)
+            except:
+                new_value = numpy.append(new_value, rule)
+        self._value = new_value
 
     def next(self,
              step=None):
@@ -30,9 +50,10 @@ class LSystem:
         :param step: number of iteration ( if type not int, step = 1 )
         :return: value system after step
         """
-        if type(step) is not int:
-            step = 1
-        for i in range(step):
+        try:
+            for i in range(step):
+                self._update_system()
+        except:
             self._update_system()
 
         return self._value
