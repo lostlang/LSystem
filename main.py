@@ -1,5 +1,6 @@
 import classes
 import time
+import numpy
 
 seed = "X"
 rules = {
@@ -18,7 +19,7 @@ rulesTurtle = {
 def bench(seed=seed,
           rules=rules,
           rulesTurtle=rulesTurtle,
-          count=1000):
+          count=1):
     all_time = 0
     min_time: int
 
@@ -27,6 +28,13 @@ def bench(seed=seed,
 
         tree = classes.LSystem(seed, rules)
         tree.next(8)
+
+        turtle = classes.LSystem(tree.get_value(), rulesTurtle)
+        turtle.next()
+
+        artist = classes.ArtistNumpy([72, 280], 90, [160, 240],
+                                      "#9BC2CF", 4, ['#416c41'])
+        artist.read_l_system(turtle.get_value())
 
         end_time = time.time()
 
