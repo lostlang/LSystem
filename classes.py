@@ -44,16 +44,39 @@ class LSystem:
         return self._value
 
 
+def string_value_to_array(array_values, default_value):
+    values = numpy.zeros((array_values.size, 2), dtype=numpy.uint)
+    for i in numpy.arange(array_values.size):
+        value = array_values[i].split("-")
+        if value[0] == "":
+            values[i][0] = default_value
+            values[i][1] = default_value
+            continue
+        values[i][0] = value[0]
+        if len(value) > 1:
+            values[i][1] = value[1]
+        else:
+            values[i][1] = value[0]
+    return values
+
+
+def to_draw_line(start_angle, start_x, start_y,
+                 action, line, angle):
+    pass
+
+
 class ArtistNumpy:
 
-    action = numpy.array(["R",  # rotate right
-                          "L",  # rotate left
-                          "I",  # change color
-                          "C",  # save system states
-                          "P",  # return system states
-                          "F",  # draw forward
-                          "f",  # move forward
-                          "S"], dtype=numpy.unicode)    # scale line size
+    action = numpy.array([
+        "C",  # save system states
+        "F",  # draw forward
+        "I",  # change color
+        "L",  # rotate left
+        "P",  # return system states
+        "R",  # rotate right
+        "S",  # scale line size
+        "f",  # move forward
+        ], dtype=numpy.unicode)
 
     action_value = numpy.array(["I", "F", "f", "S"], dtype=numpy.unicode)
     action_rotate = numpy.array(["R", "L"], dtype=numpy.unicode)
@@ -85,24 +108,6 @@ class ArtistNumpy:
             self._canvas = Image.new("RGBA", size_canvas, color=back_color)
         self._canvas_draw = ImageDraw.Draw(self._canvas)
 
-    def _push(self):
-        pass
-
-    def _pop(self):
-        pass
-
-    def _rotate(self, side, angle):
-        pass
-
-    def _scale(self, value):
-        pass
-
-    def _change_color(self, value):
-        pass
-
-    def _move(self, value):
-        pass
-
     def _draw(self, value):
         pass
 
@@ -132,27 +137,23 @@ class ArtistNumpy:
         if rotate_start[-1] == indexes_action[-1]:
             rotate_end = numpy.append(rotate_end, array.size)
         else:
-            rotate_end = numpy.append(rotate_end, rotate_start[-1])
+            rotate_end = numpy.append(rotate_end,
+                                      indexes_action[numpy.searchsorted(indexes_action, rotate_start[-1]) + 1])
 
         value_end = indexes_action[numpy.searchsorted(indexes_action, value_start[:-1]) + 1]
         if value_start[-1] == indexes_action[-1]:
-            value_end = numpy.add(value_end, [array.size])
+            value_end = numpy.add(value_end, array.size)
         else:
-            value_end = numpy.append(value_end, value_start[-1])
+            value_end = numpy.append(value_end,
+                                     indexes_action[numpy.searchsorted(indexes_action, value_start[-1]) + 1])
 
         rotate_value = numpy.array(["".join(array[n1 + 1:n2]) for n1, n2 in zip(rotate_start, rotate_end)])
-        painting_value = numpy.array(["".join(array[n1 + 1:n2]) for n1, n2 in zip(value_start, value_end)])
+        line_value = numpy.array(["".join(array[n1 + 1:n2]) for n1, n2 in zip(value_start, value_end)])
 
-        print(rotate_value)
-        print(painting_value)
+        self._angles_weight = string_value_to_array(rotate_value, self.base_angle)
+        self._lines_weight = string_value_to_array(line_value, self._base_size_line)
 
-
-        # rotate_value = get_value(array, rotate_start, rotate_end)
-        # painting_value = get_value(array, value_start, value_end)
-
-        # print(rotate_value)
-
-
+        self._actions_weight = numpy.searchsorted(self.action, array[l_system_all_action])
 
     def read_l_system(self, l_system):
         l_system_array = numpy.array([*l_system], dtype=numpy.unicode)
