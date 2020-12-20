@@ -8,10 +8,10 @@ rules = {
     "F": "FF"
 }
 rulesTurtle = {
-    "F": "F",
+    "F": "F0-1",
     "X": "",
     "-": "L25",
-    "+": "R25-20",
+    "+": "R25",
     "[": "C",
     "]": "P"
 }
@@ -19,7 +19,7 @@ rulesTurtle = {
 def bench(seed=seed,
           rules=rules,
           rulesTurtle=rulesTurtle,
-          count=1):
+          count=10):
     all_time = 0
     min_time: int
 
@@ -32,9 +32,13 @@ def bench(seed=seed,
         turtle = classes.LSystem(tree.get_value(), rulesTurtle)
         turtle.next()
 
-        artist = classes.ArtistNumpy([72, 280], 90, [160, 240],
-                                      "#9BC2CF", 4, ['#416c41'])
+        artist = classes.ArtistNumpy([720, 2800], 90, [1600, 2400],
+                                      "#9BC2CF", 8, ['#416c41'])
         artist.read_l_system(turtle.get_value())
+
+        artist.draw()
+
+        artist.save_canvas("testNP")
 
         end_time = time.time()
 
